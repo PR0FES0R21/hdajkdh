@@ -75,7 +75,6 @@ async def health_check():
     return {"status": "healthy"}
 
 @app.post("/register", response_model=RegistrationResponse)
-@limiter.limit("5/minute")
 async def register_wallet(registration: WalletRegistration, request: Request):
     addr = registration.wallet_address.lower()
 
