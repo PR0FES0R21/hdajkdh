@@ -19,7 +19,7 @@ load_dotenv()
 
 # Config
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-REDIS_URI = os.getenv("REDIS_URI", "redis://localhost:6379")
+REDIS_URI = os.getenv("REDIS_URL", "redis://localhost:6379")
 DB_NAME = os.getenv("DB_NAME", "wallet_db")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "wallet_addresses")
 ALCHEMY_URL = "https://base-mainnet.g.alchemy.com/v2/HmwNcVZ6e8G-MUMQKcCONESlediOWZor"
