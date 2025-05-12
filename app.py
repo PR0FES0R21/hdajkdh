@@ -18,8 +18,8 @@ import json
 load_dotenv()
 
 # Config
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-REDIS_URI = os.getenv("REDIS_URL", "redis://localhost:6379")
+MONGO_URI = os.getenv("MONGO_URI")
+REDIS_URI = os.getenv("REDIS_URL")
 DB_NAME = os.getenv("DB_NAME", "wallet_db")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "wallet_addresses")
 ALCHEMY_URL = "https://base-mainnet.g.alchemy.com/v2/HmwNcVZ6e8G-MUMQKcCONESlediOWZor"
@@ -77,6 +77,7 @@ async def health_check():
 @app.post("/register", response_model=RegistrationResponse)
 async def register_wallet(registration: WalletRegistration, request: Request):
     addr = registration.wallet_address.lower()
+    print(MONGO_URI)
 
     if not is_address(addr):
         raise HTTPException(status_code=400, detail="Invalid wallet address format.")
