@@ -1,0 +1,6 @@
+# Ignore Python cache, environment, and secrets
+__pycache__/
+*.pyc
+venv/
+.env
+cigar-nft-dapp/
