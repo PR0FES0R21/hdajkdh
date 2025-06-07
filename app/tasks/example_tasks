@@ -1,0 +1,33 @@
+# ===========================================================================
+# File: app/tasks/example_tasks.py (Contoh Task Celery)
+# ===========================================================================
+"""
+from app.tasks.celery_app import celery_app # Import instance Celery dari celery_app.py
+from app.core.config import logger # Menggunakan logger
+import time
+
+@celery_app.task(name="cigar_ds.tasks.add_numbers") # Memberi nama eksplisit pada task (best practice)
+def add(x: int, y: int) -> int:
+    logger.info(f"Celery task 'add_numbers' started with x={x}, y={y}")
+    time.sleep(5) # Simulasi pekerjaan yang butuh waktu
+    result = x + y
+    logger.info(f"Celery task 'add_numbers' finished. Result: {result}")
+    return result
+
+@celery_app.task(name="cigar_ds.tasks.long_background_processing")
+def long_task(message: str):
+    logger.info(f"Celery task 'long_background_processing' started with message: {message}")
+    # Lakukan sesuatu yang lama di sini, misal proses data, kirim email, dll.
+    time.sleep(15) # Simulasi pekerjaan berat
+    logger.info(f"Celery task 'long_background_processing' finished for message: {message}")
+    return {"status": "completed", "message_processed": message, "timestamp": time.time()}
+
+@celery_app.task(name="cigar_ds.tasks.periodic_example")
+def periodic_example_task(greeting: str):
+    logger.info(f"Periodic task executed! Greeting: {greeting} at {time.strftime('%X')}")
+    return f"Periodic task said: {greeting}"
+
+# Untuk memanggil task dari kode FastAPI (misalnya di service):
+# from app.tasks.example_tasks import add
+# add.delay(5, 3) # Mengirim task ke Celery worker
+"""

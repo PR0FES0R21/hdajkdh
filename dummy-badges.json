@@ -1,0 +1,32 @@
+[
+    {
+    "_id": { "$oid": "683f0c0c33dddd33ff44bb55" },
+    "badgeId_str": "telegram-initiate",
+    "name": "Telegram Initiate",
+    "description": "Successfully initiated contact with the Telegram Comms Network.",
+    "imageUrl": "https://placehold.co/64x64/7289DA/FFFFFF?text=TG",
+    "criteria": "Join the official Telegram group.",
+    "createdAt": { "$date": "2025-06-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2025-06-01T00:00:00.000Z" }
+    },
+    {
+    "_id": { "$oid": "683f0d0d44eeee44ff55cc66" },
+    "badgeId_str": "x-signal-boost",
+    "name": "X Signal Booster",
+    "description": "Amplified project signals through the X Network.",
+    "imageUrl": "https://placehold.co/64x64/000000/FFFFFF?text=X",
+    "criteria": "Connect X account and make a specific post.",
+    "createdAt": { "$date": "2025-06-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2025-06-01T00:00:00.000Z" }
+    },
+    {
+    "_id": { "$oid": "683f0e0e55ffff55ff66dd77" },
+    "badgeId_str": "first-ally-recruit",
+    "name": "Recruitment Pioneer",
+    "description": "Successfully recruited your first ally to the cause.",
+    "imageUrl": "https://placehold.co/64x64/4CAF50/FFFFFF?text=Rcrt",
+    "criteria": "Have at least one user join using your referral code.",
+    "createdAt": { "$date": "2025-06-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2025-06-01T00:00:00.000Z" }
+    }
+]
