@@ -1,7 +1,6 @@
-# Gunakan image ringan tapi lengkap
 FROM python:3.10-slim
 
-# Install system dependencies (buat lxml, cryptography, dll)
+# Install system dependencies (buat lxml, cryptography, dsb)
 RUN apt-get update && apt-get install -y \
     build-essential \
     libssl-dev \
@@ -13,18 +12,18 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Set work directory
 WORKDIR /app
 
-# Salin semua file ke container
+# Copy semua file
 COPY . /app
 
-# Upgrade pip dan install dependencies
+# Upgrade pip & install dependencies
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Expose port untuk FastAPI (default: 8000)
 EXPOSE 8000
 
-# Command default: Jalankan FastAPI pakai uvicorn
+# Jalankan FastAPI saat container start
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
