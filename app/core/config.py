@@ -13,12 +13,10 @@ class Settings(BaseSettings):
     MONGODB_URL: str
     MONGODB_DB_NAME: str
 
-    REDIS_HOST: str = "localhost"
-    REDIS_PORT: int = 6379
+    REDIS_URL: str
     REDIS_DB_NONCE: int = 0
     REDIS_DB_CACHE: int = 1
     REDIS_DB_CELERY: int = 2
-    REDIS_PASSWORD: Optional[str] = None
 
     CELERY_BROKER_URL: Optional[str] = None
     CELERY_RESULT_BACKEND: Optional[str] = None
@@ -54,11 +52,9 @@ class Settings(BaseSettings):
 
     @model_validator(mode='after')
     def set_computed_urls(self) -> 'Settings':
-        nonce_redis_password_part = f":{self.REDIS_PASSWORD}@" if self.REDIS_PASSWORD else ""
-        self.NONCE_REDIS_URL = f"redis://{nonce_redis_password_part}{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB_NONCE}"
+        self.NONCE_REDIS_URL = f"{self.REDIS_URL}/{self.REDIS_DB_NONCE}"
         
-        celery_redis_password_part = f":{self.REDIS_PASSWORD}@" if self.REDIS_PASSWORD else ""
-        celery_redis_url = f"redis://{celery_redis_password_part}{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB_CELERY}"
+        celery_redis_url = f"{self.REDIS_URL}/{self.REDIS_DB_CELERY}"
         if self.CELERY_BROKER_URL is None:
             self.CELERY_BROKER_URL = celery_redis_url
         if self.CELERY_RESULT_BACKEND is None:
