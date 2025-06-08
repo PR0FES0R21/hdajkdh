@@ -108,6 +108,7 @@ class MissionService:
                 )
         return badges_resp
 
+
     async def process_mission_completion(
         self, db: AsyncIOMotorDatabase, user: UserInDB, mission_id_str_to_complete: str, completion_data: Optional[Dict[str, Any]] = None
     ) -> MissionCompletionResponse:
@@ -134,16 +135,24 @@ class MissionService:
         return await self._process_standard_mission(db, user, mission_to_complete, user_mission_link)
 
 
-    async def _process_daily_checkin(self, db: AsyncIOMotorDatabase, user: UserInDB, mission: MissionInDB) -> MissionCompletionResponse:
+    async def process_daily_checkin_completion(self, db: AsyncIOMotorDatabase, user: UserInDB) -> Dict:
+        xp_gained = 20
         now_utc = datetime.now(timezone.utc)
         if user.last_daily_checkin and user.last_daily_checkin.date() == now_utc.date():
             logger.warning(f"User {user.username} already completed daily check-in today.")
-            raise HTTPException(status_code=HttpStatus.HTTP_400_BAD_REQUEST, detail="Anda sudah melakukan check-in hari ini.")
+            raise HTTPException(
+                status_code=HttpStatus.HTTP_400_BAD_REQUEST, 
+                detail="You have already checked in today."
+            )
         
         await crud_user.update(db, db_obj_id=user.id, obj_in={"last_daily_checkin": now_utc})
         logger.info(f"User {user.username} daily check-in timestamp updated.")
-        
-        return await self._grant_rewards(db, user, mission)
+
+        await user_service.grant_xp_and_manage_rank(db, user_id=user.id, xp_to_add=xp_gained)
+        logger.info(f"Granted {xp_gained} XP to user {user.username} for daily check-in.")
+
+        return { "message": f"Daily check-in successful. You've earned {xp_gained} XP!" }
+
 
 
     async def _process_invite_mission_claim(self, db: AsyncIOMotorDatabase, user: UserInDB, mission: MissionInDB) -> MissionCompletionResponse:

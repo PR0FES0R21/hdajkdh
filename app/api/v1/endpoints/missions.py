@@ -87,3 +87,24 @@ async def complete_mission_directive_endpoint(
     except Exception as e:
         logger.error(f"Unexpected error completing mission {mission_id_str} for user {current_user.username}: {e}", exc_info=True)
         raise HTTPException(status_code=HttpStatus.HTTP_500_INTERNAL_SERVER_ERROR, detail="Gagal memproses penyelesaian misi.")
+
+@router.post(
+    "/daily-checkin", 
+    summary="Attempt to Complete a Daily Checkin"
+)
+async def complete_daily_checkin(
+    db: AsyncIOMotorDatabase = Depends(get_db),
+    current_user: UserInDB = Depends(get_current_active_user)
+):
+    logger.info(f"User {current_user.username} attempting to complete daily checkin")
+    try:
+        result = await mission_service.process_daily_checkin_completion(
+            db=db, 
+            user=current_user, 
+        )
+        return result
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.error(f"Unexpected error completing daily checkin for user {current_user.username}: {e}", exc_info=True)
+        raise HTTPException(status_code=HttpStatus.HTTP_500_INTERNAL_SERVER_ERROR, detail="Gagal memproses penyelesaian misi.")
