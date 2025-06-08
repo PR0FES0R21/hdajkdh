@@ -11,7 +11,7 @@ class RedisManager:
 
     async def connect_to_redis(self):
         if self.redis_client is None:
-            logger.info(f"Attempting to connect to Redis at {settings.REDIS_HOST}:{settings.REDIS_PORT} (DB: {settings.REDIS_DB_NONCE}) for nonces...")
+            logger.info(f"Attempting to connect to Redis at {settings.NONCE_REDIS_URL} for nonces...")
             try:
                 self.redis_client = aioredis.from_url(
                     settings.NONCE_REDIS_URL,
