@@ -65,6 +65,7 @@ class UserInDB(BaseModel):
     
     # Field baru untuk melacak check-in harian
     last_daily_checkin: Optional[datetime] = None
+    daily_checkin_streak: int = Field(default=0, ge=0)
 
     model_config = {
         "populate_by_name": True,

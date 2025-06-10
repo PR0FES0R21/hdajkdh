@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field, HttpUrl as PydanticHttpUrl
 from typing import Optional, List, Dict, Any
 from app.models.base import PyObjectId
 from app.models.mission import MissionActionType, MissionStatusType, MissionCategoryType
+from datetime import datetime
 
 # Skema untuk detail aksi di MissionDirectiveResponse
 class MissionActionResponse(BaseModel):
@@ -57,3 +58,21 @@ class MissionCompletionResponse(BaseModel):
     message: str
     xp_gained: Optional[int] = None
     badge_awarded: Optional[MissionRewardBadgeResponse] = None
+
+class DailyCheckinResponse(BaseModel):
+    message: str
+    xp_gained: int
+    current_streak: int
+
+class CheckinHistoryRecord(BaseModel):
+    # Menggunakan alias untuk mengubah nama field di JSON respons
+    checkin_date: datetime = Field(..., alias="checkinAt")
+    streak_on_day: int = Field(..., alias="streak_day_number")
+
+    model_config = {
+        "populate_by_name": True, # Mengizinkan Pydantic menggunakan alias
+        "from_attributes": True   # <-- TAMBAHKAN BARIS INI
+    }
+
+class CheckinHistoryResponse(BaseModel):
+    history: List[CheckinHistoryRecord]

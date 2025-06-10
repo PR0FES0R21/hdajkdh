@@ -9,7 +9,7 @@ from app.models.base import PyObjectId
 # Tambahkan "claim_if_eligible" untuk misi invite
 MissionActionType = Literal["external_link", "api_call", "disabled", "completed", "oauth_connect", "claim_if_eligible"] 
 MissionStatusType = Literal["available", "in_progress", "completed", "pending_verification", "failed"]
-MissionCategoryType = Literal["social", "engagement", "community", "special", "daily"]
+MissionCategoryType = Literal["social", "engagement", "community", "special"]
 
 class MissionActionDetails(BaseModel):
     label: str 
@@ -44,6 +44,21 @@ class MissionInDB(BaseModel):
         "populate_by_name": True,
         "json_encoders": {PyObjectId: str, datetime: lambda dt: dt.isoformat().replace("+00:00", "Z")},
         "arbitrary_types_allowed": True
+    }
+
+class CheckInInDB(BaseModel):
+    id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
+    userId: PyObjectId
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True,
+        "json_encoders": {
+            PyObjectId: str,
+            datetime: lambda dt: dt.isoformat().replace("+00:00", "Z"),
+        },
+        "from_attributes": True
     }
 
 class UserMissionLink(BaseModel):

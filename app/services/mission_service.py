@@ -6,15 +6,21 @@ from typing import List, Optional, Dict, Any
 from fastapi import HTTPException, status as HttpStatus
 
 from app.core.config import settings, logger
-from app.crud.crud_mission import crud_mission, crud_user_mission_link
+from app.crud.crud_mission import crud_mission, crud_user_mission_link, crud_checkin
 from app.crud.crud_user import crud_user
 from app.crud.crud_badge import crud_badge, crud_user_badge_link
+from app.crud.crud_checkin import crud_checkin
 from app.models.user import UserInDB
 from app.models.mission import MissionInDB, UserMissionLink, MissionStatusType
 from app.models.badge import BadgeInDB, UserBadgeLink
-from app.api.v1.schemas.mission import MissionDirectiveResponse, MissionProgressSummaryResponse, MissionCompletionResponse, MissionActionResponse, MissionRewardBadgeResponse
-from app.api.v1.schemas.badge import UserBadgeResponse
 from app.models.base import PyObjectId
+from app.models.checkin import CheckinRecord
+from app.api.v1.schemas.mission import (
+    MissionDirectiveResponse, MissionProgressSummaryResponse, MissionCompletionResponse,
+    MissionActionResponse, MissionRewardBadgeResponse, DailyCheckinResponse, 
+    CheckinHistoryRecord, CheckinHistoryResponse
+)
+from app.api.v1.schemas.badge import UserBadgeResponse
 from app.services.user_service import user_service
 from datetime import datetime, timezone, timedelta
 
@@ -135,24 +141,58 @@ class MissionService:
         return await self._process_standard_mission(db, user, mission_to_complete, user_mission_link)
 
 
-    async def process_daily_checkin_completion(self, db: AsyncIOMotorDatabase, user: UserInDB) -> Dict:
-        xp_gained = 20
+    async def process_daily_checkin_completion(self, db: AsyncIOMotorDatabase, user: UserInDB) -> DailyCheckinResponse:
         now_utc = datetime.now(timezone.utc)
-        if user.last_daily_checkin and user.last_daily_checkin.date() == now_utc.date():
+        today_date = now_utc.date()
+
+        # 1. Validasi: Cek apakah user sudah check-in hari ini
+        if user.last_daily_checkin and user.last_daily_checkin.date() == today_date:
             logger.warning(f"User {user.username} already completed daily check-in today.")
             raise HTTPException(
                 status_code=HttpStatus.HTTP_400_BAD_REQUEST, 
-                detail="You have already checked in today."
+                detail=f"Anda sudah check-in hari ini. Coba lagi besok."
             )
-        
-        await crud_user.update(db, db_obj_id=user.id, obj_in={"last_daily_checkin": now_utc})
-        logger.info(f"User {user.username} daily check-in timestamp updated.")
 
-        await user_service.grant_xp_and_manage_rank(db, user_id=user.id, xp_to_add=xp_gained)
-        logger.info(f"Granted {xp_gained} XP to user {user.username} for daily check-in.")
+        # 2. Kalkulasi Streak
+        yesterday_date = today_date - timedelta(days=1)
+        new_streak = 1
+        if user.last_daily_checkin and user.last_daily_checkin.date() == yesterday_date:
+            # Jika check-in terakhir adalah kemarin, lanjutkan streak
+            new_streak = user.daily_checkin_streak + 1
+        # Jika tidak, streak akan direset ke 1 (nilai default)
 
-        return { "message": f"Daily check-in successful. You've earned {xp_gained} XP!" }
+        # 3. Kalkulasi XP (contoh: base XP + bonus streak)
+        base_xp = 10
+        # Bonus XP, misalnya 5 XP per hari streak, maksimal bonus 50 (untuk 10 hari streak)
+        streak_bonus_xp = min((new_streak - 1) * 5, 50) 
+        total_xp_gained = base_xp + streak_bonus_xp
 
+        # 4. Simpan Riwayat Check-in ke collection 'checkins'
+        checkin_record = CheckinRecord(
+            userId=user.id,
+            checkinAt=now_utc,
+            streak_day_number=new_streak
+        )
+        await crud_checkin.create(db, obj_in=checkin_record)
+        logger.info(f"Created checkin record for user {user.username}, streak day {new_streak}.")
+
+        # 5. Update data di dokumen user
+        user_update_payload = {
+            "last_daily_checkin": now_utc,
+            "daily_checkin_streak": new_streak
+        }
+        await crud_user.update(db, db_obj_id=user.id, obj_in=user_update_payload)
+        logger.info(f"Updated user {user.username} with new checkin time and streak {new_streak}.")
+
+        # 6. Berikan XP dan update rank
+        await user_service.grant_xp_and_manage_rank(db, user_id=user.id, xp_to_add=total_xp_gained)
+        logger.info(f"Granted {total_xp_gained} XP to user {user.username} for daily check-in.")
+
+        return DailyCheckinResponse(
+            message=f"Check-in berhasil! Anda mendapatkan {total_xp_gained} XP.",
+            xp_gained=total_xp_gained,
+            current_streak=new_streak
+        )
 
 
     async def _process_invite_mission_claim(self, db: AsyncIOMotorDatabase, user: UserInDB, mission: MissionInDB) -> MissionCompletionResponse:
@@ -217,5 +257,29 @@ class MissionService:
             xp_gained=xp_gained if xp_gained > 0 else None,
             badge_awarded=badge_awarded_resp
         )
+    
+    async def get_checkin_history_for_user(self, db: AsyncIOMotorDatabase, user: UserInDB) -> CheckinHistoryResponse:
+        logger.info(f"Fetching 7-day check-in history for user {user.username}")
+        
+        # Siapkan filter query
+        start_date = datetime.now(timezone.utc) - timedelta(days=7)
+        filter_query = {
+            "userId": user.id,
+        }
+        
+        # Panggil get_multi dengan parameter filter dan sort yang sudah ada
+        checkin_records_db = await crud_checkin.get_multi(
+            db, 
+            query=filter_query,
+            limit=7,
+            sort=[("checkinAt", -1)] # Mengurutkan dari terbaru ke terlama
+        )
 
+        history_list = [
+            CheckinHistoryRecord.model_validate(record) for record in checkin_records_db
+        ]
+
+        return CheckinHistoryResponse(history=history_list)
+
+    
 mission_service = MissionService()

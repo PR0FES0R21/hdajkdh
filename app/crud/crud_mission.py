@@ -5,8 +5,8 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional, List, Dict, Any
 from app.models.base import PyObjectId
 from app.crud.base import CRUDBase
-from app.models.mission import MissionInDB, UserMissionLink, MissionStatusType
-from pydantic import BaseModel as PydanticBaseModel # Placeholder
+from app.models.mission import MissionInDB, CheckInInDB, UserMissionLink, MissionStatusType
+from pydantic import BaseModel as PydanticBaseModel
 
 class CRUDMission(CRUDBase[MissionInDB, PydanticBaseModel, PydanticBaseModel]):
     async def get_by_mission_id_str(self, db: AsyncIOMotorDatabase, *, mission_id_str: str) -> Optional[MissionInDB]:
@@ -38,7 +38,24 @@ class CRUDUserMissionLink(CRUDBase[UserMissionLink, PydanticBaseModel, PydanticB
     ) -> int:
         collection = await self.get_collection(db)
         return await collection.count_documents({"userId": user_id, "status": status})
-
+    
+class CRUDCheckin(CRUDBase[CheckInInDB, PydanticBaseModel, PydanticBaseModel]):
+    async def get_checkin_by_user_id(
+        self, db:AsyncIOMotorDatabase, *, user_id: PyObjectId, limit: int = 0
+    ) -> Optional[CheckInInDB]:
+        query = Dict[str, Any] = {"userId": user_id}
+        return await self.get_multi(db, query=query, limit=limit, sort=[("timestamp", -1)])
+    
+    async def store_checkin_entry(
+        self, db: AsyncIOMotorDatabase, *, user_id: PyObjectId, timestamp: str
+    ) -> CheckInInDB:
+        checkin_data_to_create_model = CheckInInDB (
+            userId=user_id,
+            timestamp=timestamp
+        )
+        return await super().create(db, obj_in=checkin_data_to_create_model)
+    
 
 crud_mission = CRUDMission(MissionInDB, "missions")
 crud_user_mission_link = CRUDUserMissionLink(UserMissionLink, "user_missions")
+crud_checkin = CRUDCheckin(CheckInInDB, "checkins")

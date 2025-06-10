@@ -35,7 +35,7 @@ class UserPublic(BaseModel):
     alliesCount: int
     profile: UserProfileModel
     systemStatus: UserSystemStatusModel
-    twitter_data: Optional[UserTwitterDataModel] = None # Tambahkan twitter_data untuk info ke frontend
+    last_daily_checkin: Optional[datetime] = None
     lastLogin: Optional[datetime] = None
     createdAt: datetime
     

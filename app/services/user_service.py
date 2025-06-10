@@ -55,9 +55,12 @@ class UserService:
                 rank_details_for_profile["rankProgressPercent"] = 100.0 if current_xp >= next_rank_xp_threshold else 0.0
         
         rank_badge_map = {
-            "Observer": "https://placehold.co/64x64/333/FFF?text=OBS", "Ally": "https://placehold.co/64x64/555/FFF?text=ALY",
-            "Field Agent": "https://placehold.co/64x64/777/FFF?text=FAG", "Strategist": "https://placehold.co/64x64/999/FFF?text=STR",
-            "Commander": "https://placehold.co/64x64/BBB/000?text=CMD", "Overseer": "https://placehold.co/64x64/DDD/000?text=OVR",
+            "Observer": "http://localhost:5173/assets/badges/observer_badge.png", 
+            "Ally": "http://localhost:5173/assets/badges/ally_badge.png",
+            "Field Agent": "http://localhost:5173/assets/badges/field_agent_badge.png", 
+            "Strategist": "http://localhost:5173/assets/badges/strategist_badge.png",
+            "Commander": "http://localhost:5173/assets/badges/commander_badge.png", 
+            "Overseer": "http://localhost:5173/assets/badges/overseer_badge.png",
         }
         badge_url_str = rank_badge_map.get(current_rank_for_calc)
         if badge_url_str:

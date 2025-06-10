@@ -10,11 +10,8 @@ from app.api.deps import get_current_active_user
 from app.models.user import UserInDB
 from app.services.mission_service import mission_service
 from app.api.v1.schemas.mission import (
-    MissionDirectiveResponse, 
-    MissionDirectivesListResponse,
-    MissionProgressSummaryResponse,
-    MissionCompletionRequest, # Jika ada body untuk complete
-    MissionCompletionResponse
+    MissionDirectiveResponse, MissionDirectivesListResponse, MissionProgressSummaryResponse,
+    MissionCompletionRequest, MissionCompletionResponse, DailyCheckinResponse, CheckinHistoryResponse 
 )
 from app.core.config import logger
 
@@ -90,7 +87,9 @@ async def complete_mission_directive_endpoint(
 
 @router.post(
     "/daily-checkin", 
-    summary="Attempt to Complete a Daily Checkin"
+    response_model=DailyCheckinResponse, # <-- Gunakan response model baru
+    summary="Perform Daily Check-in",
+    description="Melakukan check-in harian untuk mendapatkan XP dan menjaga streak."
 )
 async def complete_daily_checkin(
     db: AsyncIOMotorDatabase = Depends(get_db),
@@ -98,13 +97,39 @@ async def complete_daily_checkin(
 ):
     logger.info(f"User {current_user.username} attempting to complete daily checkin")
     try:
+        # Panggil fungsi service yang sudah diperbarui
         result = await mission_service.process_daily_checkin_completion(
             db=db, 
             user=current_user, 
         )
         return result
     except HTTPException as e:
+        # Re-raise HTTPException agar bisa ditangani oleh exception handler FastAPI
         raise e
     except Exception as e:
         logger.error(f"Unexpected error completing daily checkin for user {current_user.username}: {e}", exc_info=True)
-        raise HTTPException(status_code=HttpStatus.HTTP_500_INTERNAL_SERVER_ERROR, detail="Gagal memproses penyelesaian misi.")
+        raise HTTPException(status_code=HttpStatus.HTTP_500_INTERNAL_SERVER_ERROR, detail="Gagal memproses check-in harian.")
+
+@router.get(
+    "/me/checkin-history",
+    response_model=CheckinHistoryResponse,
+    summary="Get User's Check-in History (Last 7 Days)",
+    description="Mengambil riwayat check-in pengguna untuk 7 hari terakhir, diurutkan dari yang terbaru."
+)
+async def get_my_checkin_history(
+    db: AsyncIOMotorDatabase = Depends(get_db),
+    current_user: UserInDB = Depends(get_current_active_user)
+):
+    logger.info(f"User {current_user.username} requesting their check-in history.")
+    try:
+        history = await mission_service.get_checkin_history_for_user(
+            db=db,
+            user=current_user
+        )
+        return history
+    except Exception as e:
+        logger.error(f"Error fetching check-in history for user {current_user.username}: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=HttpStatus.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Gagal mengambil riwayat check-in."
+        )
