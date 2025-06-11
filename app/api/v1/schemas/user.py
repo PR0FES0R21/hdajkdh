@@ -38,6 +38,7 @@ class UserPublic(BaseModel):
     last_daily_checkin: Optional[datetime] = None
     lastLogin: Optional[datetime] = None
     createdAt: datetime
+    daily_checkin_streak: Optional[int] = 0
     
     model_config = {
         "populate_by_name": True,
