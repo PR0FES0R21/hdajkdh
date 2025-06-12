@@ -117,7 +117,7 @@ async def twitter_oauth_callback_endpoint(
     error_description_from_twitter = request.query_params.get("error_description")
 
     # Tentukan URL redirect ke frontend (bisa dari settings atau hardcode untuk dev)
-    frontend_redirect_base_url = "http://localhost:5173/mission-terminal" # SESUAIKAN DENGAN URL FRONTEND ANDA
+    frontend_redirect_base_url = "https://dashboard.cigarverse.space/mission-terminal" # SESUAIKAN DENGAN URL FRONTEND ANDA
 
     if error_from_twitter:
         logger.error(f"Twitter OAuth error on callback: {error_from_twitter} - {error_description_from_twitter}. State: {state_from_twitter}")

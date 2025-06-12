@@ -55,12 +55,12 @@ class UserService:
                 rank_details_for_profile["rankProgressPercent"] = 100.0 if current_xp >= next_rank_xp_threshold else 0.0
         
         rank_badge_map = {
-            "Observer": "http://localhost:5173/assets/badges/observer_badge.png", 
-            "Ally": "http://localhost:5173/assets/badges/ally_badge.png",
-            "Field Agent": "http://localhost:5173/assets/badges/field_agent_badge.png", 
-            "Strategist": "http://localhost:5173/assets/badges/strategist_badge.png",
-            "Commander": "http://localhost:5173/assets/badges/commander_badge.png", 
-            "Overseer": "http://localhost:5173/assets/badges/overseer_badge.png",
+            "Observer": "https://dashboard.cigarverse.space/assets/badges/observer_badge.png", 
+            "Ally": "https://dashboard.cigarverse.space/assets/badges/ally_badge.png",
+            "Field Agent": "https://dashboard.cigarverse.space/assets/badges/field_agent_badge.png", 
+            "Strategist": "https://dashboard.cigarverse.space/assets/badges/strategist_badge.png",
+            "Commander": "https://dashboard.cigarverse.space/assets/badges/commander_badge.png", 
+            "Overseer": "https://dashboard.cigarverse.space/assets/badges/overseer_badge.png",
         }
         badge_url_str = rank_badge_map.get(current_rank_for_calc)
         if badge_url_str:
