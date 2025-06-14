@@ -13,7 +13,11 @@ class MongoDbContextManager:
     async def connect_to_mongo(self):
         logger.info(f"Attempting to connect to MongoDB at {settings.MONGODB_URL}...")
         try:
-            self.client = AsyncIOMotorClient(settings.MONGODB_URL, serverSelectionTimeoutMS=5000)
+            self.client = AsyncIOMotorClient(
+                settings.MONGODB_URL, 
+                serverSelectionTimeoutMS=5000,
+                tz_aware=True
+            )
             await self.client.admin.command('ping')
             self.db = self.client[settings.MONGODB_DB_NAME]
             logger.info(f"Successfully connected to MongoDB database: {settings.MONGODB_DB_NAME}")

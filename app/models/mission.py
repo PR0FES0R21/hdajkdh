@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from app.models.base import PyObjectId
 
 # Tambahkan "claim_if_eligible" untuk misi invite
-MissionActionType = Literal["external_link", "api_call", "disabled", "completed", "oauth_connect", "claim_if_eligible"] 
+MissionActionType = Literal["redirect_and_verify", "disabled", "completed", "oauth_connect", "claim_if_eligible"] 
 MissionStatusType = Literal["available", "in_progress", "completed", "pending_verification", "failed"]
 MissionCategoryType = Literal["social", "engagement", "community", "special"]
 
@@ -15,6 +15,8 @@ class MissionActionDetails(BaseModel):
     label: str 
     type: MissionActionType
     url: Optional[PydanticHttpUrl] = None
+    icon: Optional[str] = None
+    platform: Optional[str] = None
 
 class RewardBadgeDetails(BaseModel):
     badge_id_str: str 
@@ -30,12 +32,15 @@ class MissionInDB(BaseModel):
     rewardXp: int = Field(..., ge=0)
     rewardBadge: Optional[RewardBadgeDetails] = None
     action: MissionActionDetails
-    prerequisites: Optional[List[PyObjectId]] = Field(default_factory=list)
+    prerequisites: Optional[List[str]] = Field(default_factory=list)
     isActive: bool = True
     order: Optional[int] = None
     
     # Field baru untuk misi invite
     requiredAllies: Optional[int] = Field(default=None, description="Jumlah ally yang dibutuhkan untuk menyelesaikan misi ini.")
+
+    targetTwitterUsername: Optional[str] = Field(default=None, description="Username target di Twitter (tanpa @) untuk misi follow.")
+    targetTweetId: Optional[str] = Field(default=None, description="ID Tweet target untuk misi like atau retweet.")
     
     createdAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updatedAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

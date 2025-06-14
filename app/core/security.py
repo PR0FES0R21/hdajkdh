@@ -8,10 +8,13 @@ from passlib.context import CryptContext
 from eth_account.messages import encode_defunct
 from eth_account import Account # Import Account dari eth_account
 from web3 import Web3 # Web3 masih dipakai untuk is_address
-
+from cryptography.fernet import Fernet
+import base64
 from app.core.config import settings, logger
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+key = base64.urlsafe_b64encode(settings.SECRET_KEY.encode()[:32].ljust(32, b'\0'))
+fernet = Fernet(key)
 
 def create_access_token(subject: Union[str, Any], user_id: str, expires_delta: Optional[timedelta] = None) -> str:
     if expires_delta:
@@ -55,3 +58,19 @@ def verify_wallet_signature(wallet_address: str, original_message: str, signatur
         # Tangkap error yang lebih spesifik jika memungkinkan, misal dari eth_keys.exceptions.BadSignature
         logger.error(f"Error during signature verification for {wallet_address}: {e}", exc_info=True)
         return False
+    
+def encrypt_data(data: str) -> str:
+    """Enkripsi string dan kembalikan sebagai string."""
+    if not data:
+        return None
+    return fernet.encrypt(data.encode()).decode()
+
+def decrypt_data(encrypted_data: str) -> str:
+    """Dekripsi token dan kembalikan sebagai string."""
+    if not encrypted_data:
+        return None
+    try:
+        return fernet.decrypt(encrypted_data.encode()).decode()
+    except Exception:
+        # Jika dekripsi gagal (misalnya, token korup atau kunci salah), kembalikan None.
+        return None

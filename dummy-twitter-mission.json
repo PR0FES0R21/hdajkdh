@@ -1,0 +1,65 @@
+[
+    {
+      "_id": { "$oid": "68511114aabbccddeeff4444" },
+      "missionId_str": "follow-cigarverse-x",
+      "title": "Signal Boost: Follow on X",
+      "description": "Follow our primary channel on the X network (@Cigarverse) to receive real-time intelligence updates.",
+      "type": "social",
+      "rewardXp": 150,
+      "rewardBadge": null,
+      "action": {
+        "label": "Verify Completion",
+        "type": "claim_if_eligible",
+        "url": null
+      },
+      "prerequisites": ["connect-x-account"],
+      "isActive": true,
+      "order": 5,
+      "targetTwitterUsername": "Cigarverse",
+      "targetTweetId": null,
+      "createdAt": { "$date": "2025-06-10T00:00:00.000Z" },
+      "updatedAt": { "$date": "2025-06-10T00:00:00.000Z" }
+    },
+    {
+      "_id": { "$oid": "68511115aabbccddeeff5555" },
+      "missionId_str": "like-announcement-tweet",
+      "title": "Acknowledge Directive: Like Post",
+      "description": "Acknowledge the latest high-priority directive by liking our announcement post on X.",
+      "type": "social",
+      "rewardXp": 75,
+      "rewardBadge": null,
+      "action": {
+        "label": "Verify Completion",
+        "type": "claim_if_eligible",
+        "url": "https://x.com/Cigarverse/status/YOUR_TWEET_ID_HERE"
+      },
+      "prerequisites": ["connect-x-account"],
+      "isActive": true,
+      "order": 6,
+      "targetTwitterUsername": null,
+      "targetTweetId": "YOUR_TWEET_ID_HERE", 
+      "createdAt": { "$date": "2025-06-10T00:00:00.000Z" },
+      "updatedAt": { "$date": "2025-06-10T00:00:00.000Z" }
+    },
+    {
+      "_id": { "$oid": "68511116aabbccddeeff6666" },
+      "missionId_str": "retweet-main-post",
+      "title": "Amplify Signal: Retweet Post",
+      "description": "Amplify our signal across the network. Retweet our main announcement to expand our reach.",
+      "type": "social",
+      "rewardXp": 100,
+      "rewardBadge": null,
+      "action": {
+        "label": "Verify Completion",
+        "type": "claim_if_eligible",
+        "url": "https://x.com/Cigarverse/status/YOUR_TWEET_ID_HERE"
+      },
+      "prerequisites": ["connect-x-account"],
+      "isActive": true,
+      "order": 7,
+      "targetTwitterUsername": null,
+      "targetTweetId": "YOUR_TWEET_ID_HERE",
+      "createdAt": { "$date": "2025-06-10T00:00:00.000Z" },
+      "updatedAt": { "$date": "2025-06-10T00:00:00.000Z" }
+    }
+  ]

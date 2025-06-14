@@ -22,6 +22,8 @@ from app.api.v1.schemas.mission import (
 )
 from app.api.v1.schemas.badge import UserBadgeResponse
 from app.services.user_service import user_service
+from app.services.twitter_service import twitter_service
+
 from datetime import datetime, timezone, timedelta
 
 class MissionService:
@@ -131,10 +133,37 @@ class MissionService:
         if user_mission_link and user_mission_link.status == "completed":
             logger.info(f"Mission {mission_id_str_to_complete} already completed by user {user.username}.")
             return MissionCompletionResponse(message="Misi sudah pernah diselesaikan.")
-
-        if mission_id_str_to_complete == "daily-checkin":
-            return await self._process_daily_checkin(db, user, mission_to_complete)
         
+        # Cek apakah user sudah connect Twitter sebelum mencoba misi Twitter
+        if mission_to_complete.type == "social" and (mission_to_complete.targetTweetId or mission_to_complete.targetTwitterUsername):
+            if not user.twitter_data or not user.twitter_data.access_token:
+                logger.warning(f"User {user.username} tried to complete Twitter mission '{mission_to_complete.title}' without a connected X account.")
+                raise HTTPException(
+                    status_code=HttpStatus.HTTP_400_BAD_REQUEST, 
+                    detail="Akun X Anda belum terhubung atau token tidak valid. Silakan hubungkan akun X Anda terlebih dahulu."
+                )
+
+        # 1. Validasi Misi Follow
+        if mission_to_complete.targetTwitterUsername:
+            is_following = await twitter_service.check_if_user_follows(user, mission_to_complete.targetTwitterUsername)
+            if not is_following:
+                raise HTTPException(status_code=HttpStatus.HTTP_400_BAD_REQUEST, detail=f"Verifikasi gagal: Anda belum mem-follow @{mission_to_complete.targetTwitterUsername}.")
+            return await self._process_standard_mission(db, user, mission_to_complete, user_mission_link)
+
+        # 2. Validasi Misi Like
+        if mission_id_str_to_complete == "like-announcement-tweet" and mission_to_complete.targetTweetId:
+            has_liked = await twitter_service.check_if_user_liked_tweet(user, mission_to_complete.targetTweetId)
+            if not has_liked:
+                raise HTTPException(status_code=HttpStatus.HTTP_400_BAD_REQUEST, detail="Verifikasi gagal: Anda belum me-like tweet yang ditentukan.")
+            return await self._process_standard_mission(db, user, mission_to_complete, user_mission_link)
+
+        # 3. Validasi Misi Retweet
+        if mission_id_str_to_complete == "retweet-main-post" and mission_to_complete.targetTweetId:
+            has_retweeted = await twitter_service.check_if_user_retweeted_tweet(user, mission_to_complete.targetTweetId)
+            if not has_retweeted:
+                raise HTTPException(status_code=HttpStatus.HTTP_400_BAD_REQUEST, detail="Verifikasi gagal: Anda belum me-retweet tweet yang ditentukan.")
+            return await self._process_standard_mission(db, user, mission_to_complete, user_mission_link)
+            
         if mission_to_complete.requiredAllies is not None and mission_to_complete.requiredAllies > 0:
             return await self._process_invite_mission_claim(db, user, mission_to_complete)
         

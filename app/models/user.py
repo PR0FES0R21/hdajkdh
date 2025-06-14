@@ -33,6 +33,10 @@ class UserSystemStatus(BaseModel):
 class UserTwitterData(BaseModel):
     twitter_user_id: str = Field(..., index=True, unique=True)
     twitter_username: str
+    access_token: Optional[str] = Field(default=None, description="Encrypted Twitter OAuth 2.0 access token.")
+    refresh_token: Optional[str] = Field(default=None, description="Encrypted Twitter OAuth 2.0 refresh token.")
+    expires_in: Optional[int] = None
+    expires_at: Optional[datetime] = None
     connected_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserInDB(BaseModel):

@@ -12,7 +12,7 @@ import base64
 from urllib.parse import urlencode, quote
 
 from app.core.config import settings, logger
-from app.core.security import create_access_token, verify_wallet_signature
+from app.core.security import create_access_token, verify_wallet_signature, encrypt_data
 from app.crud.crud_user import crud_user
 from app.api.v1.schemas.auth import WalletConnectRequest, TwitterOAuthCallbackResponse, TwitterOAuthInitiateResponse
 from app.api.v1.schemas.token import TokenResponse
@@ -31,7 +31,7 @@ from pydantic import HttpUrl as PydanticHttpUrl
 TWITTER_AUTHORIZATION_URL = "https://twitter.com/i/oauth2/authorize"
 TWITTER_TOKEN_URL = "https://api.twitter.com/2/oauth2/token"
 TWITTER_USER_ME_URL = "https://api.twitter.com/2/users/me"
-TWITTER_SCOPES = ["users.read", "tweet.read", "offline.access"]
+TWITTER_SCOPES = ["users.read", "tweet.read", "like.read", "follows.read", "offline.access"]
 CONNECT_X_MISSION_ID_STR = "connect-x-account" 
 OAUTH_STATE_EXPIRY_SECONDS = 600
 
@@ -328,6 +328,10 @@ class AuthService:
             except Exception as e:
                 logger.error(f"Error during Twitter token exchange: {e}", exc_info=True)
                 raise HTTPException(status_code=HttpStatus.HTTP_500_INTERNAL_SERVER_ERROR, detail="Kesalahan saat komunikasi dengan Twitter.")
+            
+        x_refresh_token = token_json.get("refresh_token")
+        expires_in = token_json.get("expires_in")
+        scope = token_json.get("scope")
 
         x_access_token = token_json.get("access_token")
         if not x_access_token:
@@ -363,8 +367,14 @@ class AuthService:
 
         user_twitter_data_to_save = UserTwitterData(
             twitter_user_id=twitter_user_id_str,
-            twitter_username=twitter_username_str
+            twitter_username=twitter_username_str,
+            access_token= encrypt_data(x_access_token),
+            refresh_token= encrypt_data(x_refresh_token),
+            expires_in=expires_in,
+            expires_at=datetime.utcnow() + timedelta(seconds=expires_in),
+            connected_at=datetime.utcnow(),
         )
+
         updated_user = await crud_user.update_twitter_data(
             db, user_id=platform_user.id, twitter_data=user_twitter_data_to_save
         )
