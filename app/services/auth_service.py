@@ -359,11 +359,15 @@ class AuthService:
             raise HTTPException(status_code=HttpStatus.HTTP_502_BAD_GATEWAY, detail="Data user tidak ditemukan dari Twitter.")
 
         twitter_user_id_str = twitter_user_info.get("id")
-        twitter_username_str = twitter_user_info.get("username")
+        existing_twitter_id_in_db = await crud_user.get_by_twitter_id(db, twitter_id_str=twitter_user_id_str)
+        if existing_twitter_id_in_db is not None:
+            logger.error("Twitter accout has ben used for another user")
+            raise HTTPException(status_code=HttpStatus.HTTP_502_BAD_GATEWAY, detail=f"Akun twitter ini sudah terhubung ke akun lain.")
 
+        twitter_username_str = twitter_user_info.get("username")
         if not twitter_user_id_str or not twitter_username_str:
             logger.error(f"Twitter user ID or username missing in response: {twitter_user_info}")
-            raise HTTPException(status_code=HttpStatus.HTTP_502_BAD_GATEWAY, detail="Data user Twitter tidak lengkap.")
+            raise HTTPException(status_code=HttpStatus.HTTP_409_CONFLICT, detail="Data user Twitter tidak lengkap.")
 
         user_twitter_data_to_save = UserTwitterData(
             twitter_user_id=twitter_user_id_str,
@@ -380,6 +384,8 @@ class AuthService:
         )
         if not updated_user:
             logger.error(f"Failed to update user {platform_user.username} with Twitter data. User ID: {platform_user.id}")
+            raise HTTPException(status_code=500, detail="Gagal menyimpan data akun Twitter ke user.")
+
         
         logger.info(f"User {platform_user.username} successfully connected X account @{twitter_username_str} (ID: {twitter_user_id_str})")
 

@@ -31,6 +31,12 @@ class CRUDUser(CRUDBase[UserInDB, UserCreateSchemaApi, UserUpdateSchemaApi]):
         logger.debug(f"CRUDUser: Getting user by referral_code: {referral_code}")
         doc = await collection.find_one({"referralCode": referral_code})
         return UserInDB.model_validate(doc) if doc else None
+    
+    async def get_by_twitter_id(self, db: AsyncIOMotorDatabase, *, twitter_id_str) -> Optional[UserInDB]:
+        collection = await self.get_collection(db)
+        logger.debug(f"CRUDUser: Get user by twitter_id: {twitter_id_str}")
+        doc = await collection.find_one({"twitter_data.twitter_user_id": twitter_id_str})
+        return UserInDB.model_validate(doc) if doc else None
 
     async def get_referred_users(
         self, db: AsyncIOMotorDatabase, *, referrer_id: PyObjectId, skip: int = 0, limit: int = 10

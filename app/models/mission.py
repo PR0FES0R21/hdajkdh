@@ -9,7 +9,7 @@ from app.models.base import PyObjectId
 # Tambahkan "claim_if_eligible" untuk misi invite
 MissionActionType = Literal["redirect_and_verify", "disabled", "completed", "oauth_connect", "claim_if_eligible"] 
 MissionStatusType = Literal["available", "in_progress", "completed", "pending_verification", "failed"]
-MissionCategoryType = Literal["social", "engagement", "community", "special"]
+MissionCategoryType = Literal["connect", "interact", "contribute", "special"]
 
 class MissionActionDetails(BaseModel):
     label: str 

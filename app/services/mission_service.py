@@ -26,6 +26,8 @@ from app.services.twitter_service import twitter_service
 
 from datetime import datetime, timezone, timedelta
 
+TWITTER_VALIDATION_COOLDOWN = 905
+
 class MissionService:
     async def get_directives_for_user(self, db: AsyncIOMotorDatabase, user: UserInDB) -> List[MissionDirectiveResponse]:
         active_missions_db = await crud_mission.get_active_missions(db, limit=100)
@@ -145,9 +147,9 @@ class MissionService:
 
         # 1. Validasi Misi Follow
         if mission_to_complete.targetTwitterUsername:
-            is_following = await twitter_service.check_if_user_follows(user, mission_to_complete.targetTwitterUsername)
-            if not is_following:
-                raise HTTPException(status_code=HttpStatus.HTTP_400_BAD_REQUEST, detail=f"Verifikasi gagal: Anda belum mem-follow @{mission_to_complete.targetTwitterUsername}.")
+            # is_following = await twitter_service.check_if_user_follows(user, mission_to_complete.targetTwitterUsername)
+            # if not is_following:
+            #     raise HTTPException(status_code=HttpStatus.HTTP_400_BAD_REQUEST, detail=f"Verifikasi gagal: Anda belum mem-follow @{mission_to_complete.targetTwitterUsername}.")
             return await self._process_standard_mission(db, user, mission_to_complete, user_mission_link)
 
         # 2. Validasi Misi Like

@@ -11,7 +11,7 @@ celery = Celery(
     __name__,
     broker=REDIS_URL,
     backend=REDIS_URL,
-    include=['app.tasks.twitter_tasks'] # Arahkan ke file task kita nanti
+    include=['app.tasks.twitter_tasks']
 )
 
 celery.conf.update(
