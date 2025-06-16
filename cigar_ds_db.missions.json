@@ -1,5 +1,239 @@
 [{
   "_id": {
+    "$oid": "68400001aabbccddeeff0001"
+  },
+  "missionId_str": "connect-x-account",
+  "title": "X-Protocol Synchronization",
+  "description": "Establish a secure link with the X Network by connecting your operative account. This will enhance your signal reach and unlock further directives.",
+  "type": "connect",
+  "rewardXp": 100,
+  "rewardBadge": null,
+  "action": {
+    "label": "Connect X Account",
+    "type": "oauth_connect",
+    "url": null,
+    "icon": "twitter",
+    "platform": "twitter"
+  },
+  "prerequisites": [],
+  "isActive": true,
+  "order": 1,
+  "createdAt": {
+    "$date": "2025-06-05T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-05T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68511114aabbccddeeff4444"
+  },
+  "missionId_str": "follow-cigarverse-x",
+  "title": "Signal Boost: Follow on X",
+  "description": "Follow our primary channel on the X network (@Cigarverse) to receive real-time intelligence updates.",
+  "type": "connect",
+  "rewardXp": 150,
+  "rewardBadge": null,
+  "action": {
+    "label": "Engage Operative",
+    "type": "redirect_and_verify",
+    "url": "https://x.com/Cristiano",
+    "icon": "twitter"
+  },
+  "prerequisites": [
+    "connect-x-account"
+  ],
+  "isActive": true,
+  "order": 5,
+  "targetTwitterUsername": "Cristiano",
+  "targetTweetId": null,
+  "createdAt": {
+    "$date": "2025-06-10T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-10T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68511115aabbccddeeff5555"
+  },
+  "missionId_str": "like-announcement-tweet",
+  "title": "Acknowledge Directive: Like Post",
+  "description": "Acknowledge the latest high-priority directive by liking our announcement post on X.",
+  "type": "interact",
+  "rewardXp": 75,
+  "rewardBadge": null,
+  "action": {
+    "label": "Like Transmission",
+    "type": "redirect_and_verify",
+    "url": "https://x.com/Cristiano/status/1933480103910019535",
+    "icon": "twitter"
+  },
+  "prerequisites": [
+    "connect-x-account"
+  ],
+  "isActive": true,
+  "order": 6,
+  "targetTwitterUsername": null,
+  "targetTweetId": "1933480103910019535",
+  "createdAt": {
+    "$date": "2025-06-10T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-10T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68511116aabbccddeeff6666"
+  },
+  "missionId_str": "retweet-main-post",
+  "title": "Amplify Signal: Retweet Post",
+  "description": "Amplify our signal across the network. Retweet our main announcement to expand our reach.",
+  "type": "interact",
+  "rewardXp": 100,
+  "rewardBadge": null,
+  "action": {
+    "label": "Amplify Signal",
+    "type": "redirect_and_verify",
+    "url": "https://x.com/Cristiano/status/1933480103910019535",
+    "icon": "twitter"
+  },
+  "prerequisites": [
+    "connect-x-account"
+  ],
+  "isActive": true,
+  "order": 7,
+  "targetTwitterUsername": null,
+  "targetTweetId": "1933480103910019535",
+  "createdAt": {
+    "$date": "2025-06-10T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-10T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "684c65c10ba73523e2aa0930"
+  },
+  "missionId_str": "invite-1-ally",
+  "title": "First Contact: Recruit an Ally",
+  "description": "Expand the network by recruiting your first operative. A strong network is a victorious network.",
+  "type": "contribute",
+  "rewardXp": 250,
+  "rewardBadge": {
+    "badge_id_str": "recruitment-pioneer",
+    "name": "Recruitment Pioneer",
+    "imageUrl": "https://placehold.co/64x64/4CAF50/FFFFFF?text=Rcrt"
+  },
+  "action": {
+    "label": "Claim Reward",
+    "type": "claim_if_eligible",
+    "url": null,
+    "icon": "users"
+  },
+  "prerequisites": [],
+  "isActive": true,
+  "order": 10,
+  "requiredAllies": 1,
+  "createdAt": {
+    "$date": "2025-06-05T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-05T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "684d1e7ea06edea752b35e5e"
+  },
+  "missionId_str": "invite-3-allies",
+  "title": "Grow the Ranks: Form a Squad",
+  "description": "A lone operative is vulnerable. Strengthen our forces by recruiting a total of 3 allies.",
+  "type": "contribute",
+  "rewardXp": 500,
+  "rewardBadge": null,
+  "action": {
+    "label": "Claim Reward",
+    "type": "claim_if_eligible",
+    "url": null
+  },
+  "prerequisites": [],
+  "isActive": true,
+  "order": 11,
+  "requiredAllies": 3,
+  "createdAt": {
+    "$date": "2025-06-05T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-05T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "684d1e9aa06edea752b35e5f"
+  },
+  "missionId_str": "invite-5-allies",
+  "title": "Network Expansion: Build a Cell",
+  "description": "Establish a core intelligence cell by expanding your network to 5 operatives.",
+  "type": "contribute",
+  "rewardXp": 1000,
+  "rewardBadge": {
+    "badge_id_str": "network-architect",
+    "name": "Network Architect",
+    "imageUrl": "https://placehold.co/64x64/03A9F4/FFFFFF?text=NetA"
+  },
+  "action": {
+    "label": "Claim Reward",
+    "type": "claim_if_eligible",
+    "url": null
+  },
+  "prerequisites": [],
+  "isActive": true,
+  "order": 12,
+  "requiredAllies": 5,
+  "createdAt": {
+    "$date": "2025-06-05T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-05T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "684d1ec2a06edea752b35e60"
+  },
+  "missionId_str": "join-telegram",
+  "title": "Establish Comms: Telegram Nexus",
+  "description": "Integrate with our primary communication channel on Telegram to receive direct updates and coordinate with fellow operatives.",
+  "type": "connect",
+  "rewardXp": 50,
+  "rewardBadge": {
+    "badge_id_str": "telegram-initiate",
+    "name": "Telegram Initiate",
+    "imageUrl": "https://placehold.co/64x64/7289DA/FFFFFF?text=TG"
+  },
+  "action": {
+    "label": "Join Telegram Channel",
+    "type": "redirect_and_verify",
+    "url": "https://t.me/yourtelegramchannel"
+  },
+  "prerequisites": [],
+  "isActive": true,
+  "order": 1,
+  "requiredAllies": null,
+  "createdAt": {
+    "$date": "2025-06-01T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-01T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
     "$oid": "68411111aabbccddeeff1111"
   },
   "missionId_str": "invite-1-ally",
@@ -112,35 +346,6 @@
   },
   "updatedAt": {
     "$date": "2025-06-01T00:00:00.000Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "68400001aabbccddeeff0001"
-  },
-  "missionId_str": "connect-x-account",
-  "title": "X-Protocol Synchronization",
-  "description": "Establish a secure link with the X Network by connecting your operative account. This will enhance your signal reach and unlock further directives.",
-  "type": "social",
-  "rewardXp": 100,
-  "rewardBadge": {
-    "badge_id_str": "x-signal-boost",
-    "name": "X Signal Booster",
-    "imageUrl": "https://placehold.co/64x64/000000/FFFFFF?text=X"
-  },
-  "action": {
-    "label": "Connect X Account",
-    "type": "oauth_connect",
-    "url": null
-  },
-  "prerequisites": [],
-  "isActive": true,
-  "order": 1,
-  "createdAt": {
-    "$date": "2025-06-05T00:00:00.000Z"
-  },
-  "updatedAt": {
-    "$date": "2025-06-05T00:00:00.000Z"
   }
 },
 {

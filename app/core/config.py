@@ -28,7 +28,9 @@ class Settings(BaseSettings):
     # X (Twitter) OAuth 2.0 Settings
     TWITTER_CLIENT_ID: str
     TWITTER_CLIENT_SECRET: str
-    TWITTER_CALLBACK_URL: str # URL callback yang didaftarkan di Twitter Dev Portal
+    TWITTER_CALLBACK_URL: str
+
+    FRONTEND_REDIRECT_URL: str
 
     DEFAULT_RANK_OBSERVER: str = "Observer"
     

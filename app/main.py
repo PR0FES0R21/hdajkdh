@@ -39,7 +39,8 @@ app = FastAPI(
 
 # Pengaturan CORS (sama seperti sebelumnya)
 origins = [
-    "*"
+    "https://dashboard.cigarverse.space",
+    "https://cigarverse.space"
 ]
 
 app.add_middleware(

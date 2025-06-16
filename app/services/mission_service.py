@@ -153,14 +153,14 @@ class MissionService:
             return await self._process_standard_mission(db, user, mission_to_complete, user_mission_link)
 
         # 2. Validasi Misi Like
-        if mission_id_str_to_complete == "like-announcement-tweet" and mission_to_complete.targetTweetId:
+        if "like" in mission_id_str_to_complete and mission_to_complete.targetTweetId:
             has_liked = await twitter_service.check_if_user_liked_tweet(user, mission_to_complete.targetTweetId)
             if not has_liked:
                 raise HTTPException(status_code=HttpStatus.HTTP_400_BAD_REQUEST, detail="Verifikasi gagal: Anda belum me-like tweet yang ditentukan.")
             return await self._process_standard_mission(db, user, mission_to_complete, user_mission_link)
 
         # 3. Validasi Misi Retweet
-        if mission_id_str_to_complete == "retweet-main-post" and mission_to_complete.targetTweetId:
+        if "retweet" in mission_id_str_to_complete and mission_to_complete.targetTweetId:
             has_retweeted = await twitter_service.check_if_user_retweeted_tweet(user, mission_to_complete.targetTweetId)
             if not has_retweeted:
                 raise HTTPException(status_code=HttpStatus.HTTP_400_BAD_REQUEST, detail="Verifikasi gagal: Anda belum me-retweet tweet yang ditentukan.")
